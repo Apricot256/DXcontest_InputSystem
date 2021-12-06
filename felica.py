@@ -6,7 +6,8 @@ from nfc import ContactlessFrontend, connect
 
 url = 'https://api.dxcontest.sora210.dev'   #server url
 pin = 26    #output gpio pin
-delay = 2000 #after reading delay [ms]
+delay1 = 1000 #main loop delay [ms]
+delay2 = 500 #after reading delay [ms]
 
 class felica():
 
@@ -14,7 +15,6 @@ class felica():
         self.clf = ContactlessFrontend('usb')
         self.gpio = LED(pin)
         self.payload = {'id':0}
-
 
     #get student infomation
     def f_read(self):
@@ -29,13 +29,13 @@ class felica():
         else:
             return False
 
-    #eliminate beep sound
+    #emission beep sound (pi-pi)
     def beep(self):
         for i in range(2):
             self.gpio.on()
-            sleep(delay/(1000*4))
+            sleep(delay2/(1000*4))
             self.gpio.off()
-            sleep(delay/(1000*4))
+            sleep(delay2/(1000*4))
 
     #post information
     def post(self):
@@ -43,8 +43,9 @@ class felica():
 
 
 if __name__ == '__main__':
-    fe = felica(url)
+    fe = felica()
     while True:
         if fe.f_read():
             fe.post()
             fe.beep()
+        sleep(delay1)
