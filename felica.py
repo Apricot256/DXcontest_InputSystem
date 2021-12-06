@@ -1,17 +1,17 @@
 from time import sleep
 from requests import post
 from gpiozero import LED 
-import nfc
+from nfc import ContactlessFrontend, connect
 
 
 url = 'https://api.dxcontest.sora210.dev'   #server url
 pin = 26    #output gpio pin
-delay = 300 #after reading delay [ms]
+delay = 2000 #after reading delay [ms]
 
 class felica():
 
     def __init__(self):
-        self.clf = nfc.ContactlessFrontend('usb')
+        self.clf = ContactlessFrontend('usb')
         self.gpio = LED(pin)
         self.payload = {'id':0}
 
@@ -33,12 +33,12 @@ class felica():
     def beep(self):
         for i in range(2):
             self.gpio.on()
-            sleep(delay/(1000*2))
+            sleep(delay/(1000*4))
             self.gpio.off()
+            sleep(delay/(1000*4))
 
     #post information
     def post(self):
-
         r = post(url, data=self.payload)
 
 
