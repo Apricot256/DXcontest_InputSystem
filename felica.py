@@ -4,41 +4,42 @@ from gpiozero import LED
 import nfc
 
 
-url = 'https://api.dxcontest.sora210.dev'
-pin = 26
+url = 'https://api.dxcontest.sora210.dev'   #server url
+pin = 26    #output gpio pin
 delay = 300 #after reading delay [ms]
 
 class felica():
+
     def __init__(self):
         self.clf = nfc.ContactlessFrontend('usb')
         self.gpio = LED(pin)
-        self.url = url
         self.payload = {'id':0}
 
 
     #get student infomation
     def f_read(self):
         tag = self.clf.connect(rdwr={'on-connect': lambda tag: False})
-        tag = str(tag).split() 
-        tag = tag[4]
-        #success reading
+        #read successfly
         if tag:
+            tag = str(tag).split() 
+            tag = tag[4]
             self.payload['id'] = tag
             return True
-        #can't read
+        #read fault
         else:
             return False
 
+    #eliminate beep sound
     def beep(self):
         for i in range(2):
             self.gpio.on()
             sleep(delay/(1000*2))
             self.gpio.off()
 
-
-    #send information
+    #post information
     def post(self):
-        r = post(self.url, data=self.payload)
+
+        r = post(url, data=self.payload)
 
 
 if __name__ == '__main__':
